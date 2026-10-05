@@ -84,12 +84,12 @@ README.md         # this guide
 
 ## License
 
- NFA Use at your own risk. Not financial advice
+Use at your own risk. Not financial advice
 
 
  ## About me
 
 - DID:z6MksnizCG1qBxYyRyChKbgkkyGY1DTTZC3U7pn21PSQUWDF
-- X: https://x.com/hadiew
+- X: https://x.com/_hadiew
 
  
