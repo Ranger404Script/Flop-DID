@@ -84,4 +84,12 @@ README.md         # this guide
 
 ## License
 
-MIT. Use at your own risk. Not financial advice.
+ NFA Use at your own risk. Not financial advice
+
+
+ ## About me
+
+- DID:z6MksnizCG1qBxYyRyChKbgkkyGY1DTTZC3U7pn21PSQUWDF
+- X: https://x.com/hadiew
+
+ 
