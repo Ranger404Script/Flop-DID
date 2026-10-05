@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-generate_did.py - ساخت هویت did:key (Ed25519) به‌صورت لوکال
+Generate an Ed25519 did:key identity locally.
 
-دستورها:
-    python3 generate_did.py init   # ساخت کلید جدید (فقط یک بار)
-    python3 generate_did.py did    # نمایش DID عمومی
+Usage:
+    python3 generate_did.py init   # create a new key (run once)
+    python3 generate_did.py did    # print your public DID
 
-کلید خصوصی با رمز عبور رمزنگاری می‌شود و در identity.pem ذخیره می‌شود.
-هیچ داده‌ای به اینترنت ارسال نمی‌شود.
+The private key is encrypted with a passphrase and saved to identity.pem.
+Nothing is sent over the network.
 """
 import getpass
 import os
@@ -35,18 +35,18 @@ def did_from_private(key: Ed25519PrivateKey) -> str:
     raw_pub = key.public_key().public_bytes(
         serialization.Encoding.Raw, serialization.PublicFormat.Raw
     )
-    # multicodec ed25519-pub = 0xed 0x01  ->  base58btc  ->  پیشوند z
+    # multicodec prefix for ed25519-pub is 0xed 0x01, then base58btc, then "z"
     return "did:key:z" + b58encode(b"\xed\x01" + raw_pub)
 
 
 def init() -> None:
     if KEY_FILE.exists():
-        sys.exit("identity.pem از قبل وجود دارد. دوباره init نزن، کلید قبلی از بین می‌رود.")
-    pw = getpass.getpass("رمز عبور برای رمزنگاری کلید: ")
+        sys.exit("identity.pem already exists. Running init again would overwrite your key, so I stopped.")
+    pw = getpass.getpass("Passphrase for the key: ")
     if len(pw) < 8:
-        sys.exit("رمز عبور حداقل ۸ کاراکتر باشد.")
-    if pw != getpass.getpass("تکرار رمز عبور: "):
-        sys.exit("رمزها یکسان نیستند.")
+        sys.exit("Use a passphrase with at least 8 characters.")
+    if pw != getpass.getpass("Repeat passphrase: "):
+        sys.exit("Passphrases don't match.")
 
     key = Ed25519PrivateKey.generate()
     pem = key.private_bytes(
@@ -58,15 +58,15 @@ def init() -> None:
     with os.fdopen(fd, "wb") as f:
         f.write(pem)
 
-    print("کلید ساخته شد و در identity.pem ذخیره شد.")
-    print("DID عمومی تو:", did_from_private(key))
-    print("از identity.pem و رمز عبورش همین حالا چند نسخه‌ی پشتیبان بگیر.")
+    print("Key created and saved to identity.pem")
+    print("Your public DID:", did_from_private(key))
+    print("Back up identity.pem and your passphrase now.")
 
 
 def show_did() -> None:
     if not KEY_FILE.exists():
-        sys.exit("اول python3 generate_did.py init را اجرا کن.")
-    pw = getpass.getpass("رمز عبور: ")
+        sys.exit("Run `python3 generate_did.py init` first.")
+    pw = getpass.getpass("Passphrase: ")
     key = serialization.load_pem_private_key(KEY_FILE.read_bytes(), pw.encode())
     print(did_from_private(key))
 
